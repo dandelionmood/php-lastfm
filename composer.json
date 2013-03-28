@@ -1,5 +1,5 @@
 {
-	"name": "dandelionmood/php-lastfm",
+	"name": "dandelionmood/lastfm",
 	"description": "Dead simple wrapper for the Last.fm API.",
 	"keywords": ["api","last","fm","last.fm","wrapper"],
 	"type": "library",

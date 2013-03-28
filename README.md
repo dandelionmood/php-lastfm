@@ -7,7 +7,16 @@ incomplete implementations or very complicated ones. I love simple things
 so I decided to take my chance and design a simple class that could do
 everything in the most simple way.
 
-You can generate the class documentation using the ```./apigen``` command.
+*The key idea is that the [official documentation](http://www.lastfm.fr/api)
+is very good, and you shoudn't need anything else to work with the API.*
+
+## Installation
+
+You should install it through Composer / Packagist, because …
+[Well, it's awesome](http://getcomposer.org/doc/00-intro.md) !
+
+The package is available
+[here on Packagist](https://packagist.org/packages/dandelionmood/lastfm).
 
 ## Standard methods (no authentication needed)
 
@@ -127,3 +136,11 @@ $app->get('/shout/:session_key', function($session_key) use($app) {
 
 You need to add a third parameter when calling the ```shout()``` function to let
 the API know it's an authenticated call.
+
+## Last words
+
+You can generate the class documentation using the ```./apigen``` command.
+
+The unit tests are very scarce at the moment, but they should work if you
+specify your own api key and secret, look in ```tests/LastFmTest.php```. You
+can launch them by calling the ```./phpunit``` command/
