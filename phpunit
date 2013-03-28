@@ -1,0 +1,10 @@
+#!/bin/bash
+echo "
+	Running the test suite …
+	========================
+	
+	If something goes wrong, please check in the
+	OpenExchangeRateTest if you have correctly set you own «app id».
+	See here to get one : https://openexchangerates.org/signup
+"
+vendor/bin/phpunit -c phpunit.xml

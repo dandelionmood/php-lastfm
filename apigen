@@ -1,0 +1,13 @@
+#!/bin/bash
+echo "
+	Generation API Documentation
+	============================
+"
+
+php -d memory_limit="32M" vendor/bin/apigen.php \
+	--title "LastFm Wrapper API" \
+	--source lib/ \
+	--main LastFm \
+	--destination doc/ \
+	--download "Yes" \
+	--wipeout "Yes" \
