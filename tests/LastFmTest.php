@@ -1,5 +1,5 @@
 <?php
-use \LastFm\LastFm;
+use \Dandelionmood\LastFm\LastFm;
 
 /**
 	* A simple test to see if the minimum is working
