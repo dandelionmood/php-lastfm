@@ -28,7 +28,7 @@ Once it's done, here's how you get an instance to work with :
 
 ```php
 // The secret is only needed if you want to access authenticated methods
-$lastfm = new \LastFm\LastFm( $lastfm_api_key, $lastfm_api_secret );
+$lastfm = new \Dandelionmood\LastFm\LastFm( $lastfm_api_key, $lastfm_api_secret );
 ```
 
 Now let's say you want to get info on a given artist ? If you look into the

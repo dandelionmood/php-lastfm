@@ -7,7 +7,7 @@
 	* containing the API key and secret to make it work.
 */
 
-use \LastFm\LastFm;
+use \Dandelionmood\LastFm\LastFm;
 use \Slim\Slim;
 
 $app = new Slim();
