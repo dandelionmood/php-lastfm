@@ -1,5 +1,5 @@
 <?php
-namespace LastFm;
+namespace Dandelionmood\LastFm;
 
 use \Buzz\Browser;
 
