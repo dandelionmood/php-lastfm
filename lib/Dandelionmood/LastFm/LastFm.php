@@ -147,7 +147,7 @@ class LastFm
 		$browser = new Browser();
 		$response = $browser->post(
 			self::API_URL,
-			['content-type' => 'application/x-www-form-urlencoded'],
+			array('content-type' => 'application/x-www-form-urlencoded'),
 			http_build_query( $parameters )
 		);
 		$json = json_decode( $response->getContent() );
