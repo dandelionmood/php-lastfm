@@ -153,7 +153,7 @@ class LastFm
 		$json = json_decode( $response->getContent() );
 		
 		// The JSON couldn't be decoded …
-		if( $json === false )
+		if( $json === NULL )
 			throw new \Exception("JSON response seems incorrect.");
 		
 		// An error has occurred …
