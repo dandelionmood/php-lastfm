@@ -19,9 +19,9 @@ use \Buzz\Browser;
 */
 class LastFm
 {
-	private $_api_key = null;
-	private $_api_secret = null;
-	private $_session_key = null;
+	protected $_api_key = null;
+	protected $_api_secret = null;
+	protected $_session_key = null;
 	
 	const API_URL = 'http://ws.audioscrobbler.com/2.0/';
 	const AUTH_URL = 'http://www.last.fm/api/auth/';
