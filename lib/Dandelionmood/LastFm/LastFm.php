@@ -157,9 +157,11 @@ class LastFm
 			throw new \Exception("JSON response seems incorrect.");
 		
 		// An error has occurred …
-		if( !empty($json->error) )
-			throw new \Exception("[{$json->error}|{$json->message}] "
-				.implode(', ', $json->links)."\n".http_build_query( $parameters ));
+        	if( !empty($json->error) ) {
+            		$links = isset($json->links) ? implode(', ', $json->links) : '';
+            		throw new \Exception("[{$json->error}|{$json->message}] " .
+                		$links."\n".http_build_query( $parameters ));
+        	}
 		
 		return $json;
 	}
