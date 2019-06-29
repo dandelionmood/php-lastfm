@@ -4,7 +4,7 @@ echo "
 	========================
 	
 	If something goes wrong, please check in the
-	OpenExchangeRateTest if you have correctly set you own «app id».
-	See here to get one : https://openexchangerates.org/signup
+	LastFM settings to create or get you app ID and secret
+	http://www.lastfm.fr/api/accounts
 "
 vendor/bin/phpunit -c phpunit.xml

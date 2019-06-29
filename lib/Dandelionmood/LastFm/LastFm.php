@@ -1,7 +1,11 @@
 <?php
 namespace Dandelionmood\LastFm;
 
-use \Buzz\Browser;
+use Buzz\Browser;
+use Http\Client\HttpClient;
+use Buzz\Client\FileGetContents;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7\Request;
 
 /**
 	* Dead-simple LastFm API wrapper class.
@@ -22,9 +26,11 @@ class LastFm
 	protected $_api_key = null;
 	protected $_api_secret = null;
 	protected $_session_key = null;
-	
-	const API_URL = 'http://ws.audioscrobbler.com/2.0/';
-	const AUTH_URL = 'http://www.last.fm/api/auth/';
+	protected $_http_client = null;
+	protected $_http_request_options = [];
+
+	const API_URL = 'https://ws.audioscrobbler.com/2.0/';
+	const AUTH_URL = 'https://www.last.fm/api/auth/';
 	
 	/**
 		* The API requires at last an api_key — if you want to gain access to
@@ -45,8 +51,36 @@ class LastFm
 		$this->_api_key = $api_key;
 		$this->_api_secret = $api_secret;
 		$this->_session_key = $session_key;
+
+		$this->_http_client = new FileGetContents(new Psr17Factory());
+	}
+
+	/**
+	 * Allows an optional HTTP Client customization.
+	 *
+	 * Useful if default method (file get content to a URL) is not an option.
+	 *
+	 * @param HttpClient $client Buzz Client to use 
+	 *
+	 * @see https://github.com/kriswallsmith/Buzz/blob/master/doc/client.md
+	 */
+	public function set_http_client( HttpClient $client )
+	{
+		$this->_http_client = $client;
 	}
 	
+	/**
+	  * Allows to tweak http request options.
+	  * You can for example change the timeout, etc.
+	  * @param array $options
+	  *
+	  * @see https://github.com/kriswallsmith/Buzz/blob/master/doc/client.md#configuration
+	*/
+	public function set_http_request_options( array $options ) 
+	{
+		$this->_http_request_options = $options;
+	}
+
 	/**
 		* This is the *first* step of the authentication process.
 		* @see http://www.lastfm.fr/api/webauth
@@ -56,10 +90,10 @@ class LastFm
 	*/
 	public function auth_get_url( $callback_url )
 	{
-		$url = self::AUTH_URL.'?'.http_build_query(array(
+		$url = self::AUTH_URL.'?'.http_build_query([
 			'api_key' => $this->_api_key,
-			'cb' => $callback_url
-		));
+			'cb' => $callback_url,
+		]);
 		
 		return $url;
 	}
@@ -73,12 +107,9 @@ class LastFm
 	*/
 	public function auth_get_session( $token )
 	{
-		return $this->auth_getSession(
-			array(
-				'token' => $token
-			),
-			true
-		);
+		return $this->auth_getSession([
+			'token' => $token,
+		], true);
 	}
 	
 	
@@ -94,10 +125,10 @@ class LastFm
 		* @param array parameters of the method.
 		* @return the result of {@link self::_make_request()}
 	*/
-	public function __call( $method, $parameters = array() )
+	public function __call( $method, $parameters = [] )
 	{
 		$method = str_replace('_','.',$method);
-		$params = isset($parameters[0]) ? $parameters[0] : array();
+		$params = isset($parameters[0]) ? $parameters[0] : [];
 		$do_request_auth = isset($parameters[1]) ? $parameters[1] : false;
 		return $this->_make_request( $method, $params, $do_request_auth );
 	}
@@ -115,11 +146,11 @@ class LastFm
 		$do_request_auth = false )
 	{
 		// We automatically append a few parameters here.
-		$parameters = array_merge(array(
+		$parameters = array_merge([
 			'method' => $method,
 			'format' => 'json',
 			'api_key' => $this->_api_key
-		), $parameters);
+		], $parameters);
 		
 		// Do we need to authenticate the request ?
 		if( $do_request_auth ) {
@@ -143,25 +174,29 @@ class LastFm
 			
 		}
 		
+
 		// We have everything we need, let's query the API
-		$browser = new Browser();
-		$response = $browser->post(
+		$browser = new Browser($this->_http_client, new Psr17Factory());
+		$request = new Request(
+			'POST',
 			self::API_URL,
-			array('content-type' => 'application/x-www-form-urlencoded'),
+			[ 'content-type' => 'application/x-www-form-urlencoded' ],
 			http_build_query( $parameters )
 		);
-		$json = json_decode( $response->getContent() );
+		$response = $browser->sendRequest($request, $this->_http_request_options);
+
+		$json = json_decode( $response->getBody()->__toString() );
 		
 		// The JSON couldn't be decoded …
 		if( $json === NULL )
 			throw new \Exception("JSON response seems incorrect.");
 		
 		// An error has occurred …
-        	if( !empty($json->error) ) {
-            		$links = isset($json->links) ? implode(', ', $json->links) : '';
-            		throw new \Exception("[{$json->error}|{$json->message}] " .
-                		$links."\n".http_build_query( $parameters ));
-        	}
+		if( !empty($json->error) ) {
+				$links = isset($json->links) ? implode(', ', $json->links) : '';
+				throw new \Exception("[{$json->error}|{$json->message}] " .
+					$links."\n".http_build_query( $parameters ));
+		}
 		
 		return $json;
 	}

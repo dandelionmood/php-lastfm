@@ -3,13 +3,11 @@
 	bootstrap="vendor/autoload.php"
 	backupStaticAttributes="false"
 	colors="true"
-	debug="true"
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	processIsolation="false"
 	stopOnFailure="false"
-	syntaxCheck="false"
 	>
 	<testsuites>
 		<testsuite name="LastFm Test Suite">
